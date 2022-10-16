@@ -34,7 +34,10 @@ app.post('/api/shorturl', function (req, res) {
         return;
     }
 
-    dns.lookup(urlSansProtocol, (err, address, family) => {
+    let hostname = urlSansProtocol.slice(0, urlSansProtocol.indexOf('/'));
+    console.log(hostname);
+
+    dns.lookup(hostname, (err, address, family) => {
         err ? console.log(err) && res.json({error: 'Invalid url'}) : console.log(address);
 
         if (err) return;
