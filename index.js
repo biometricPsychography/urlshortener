@@ -44,7 +44,7 @@ app.post('/api/shorturl', function (req, res) {
         res.json({ original_url: req.body.url, short_url: `${i}`});
         
         let originalReq = req;
-        app.get(`/api/${i}`, (req, res) => {
+        app.get(`/api/shorturl/${i}`, (req, res) => {
             res.redirect(originalReq.body.url)
         })
         i++;
