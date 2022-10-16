@@ -5,7 +5,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 const dns = require('node:dns');
 
-/*
+
 
 // Basic Configuration
 const PORT = 8080;
@@ -18,27 +18,42 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-let tempRedirectPathsArr = [];
 
+let i = 0;
 // Your first API endpoint
 app.post('/api/shorturl', function (req, res) {
+    
+    let urlSansProtocol = '';
 
-    if (req.body.url.slice(0, 7) === 'http://' || req.body.url.slice(0, 8) === 'https://') {
-
-        dns.lookup(req.body.url, (err, address, family) => {
-            err ? console.log(err) : console.log(address);
-
-            res.json({ greeting: req.body.url });
-        })
-
-        
-
+    if (req.body.url.slice(0, 7) === 'http://') {
+        urlSansProtocol = req.body.url.slice(7);
+    } else if (req.body.url.slice(0, 8) === 'https://') {
+        urlSansProtocol = req.body.url.slice(8);
+    } else {
+        res.json({error: 'Invalid url'})
+        return;
     }
+
+    dns.lookup(urlSansProtocol, (err, address, family) => {
+        err ? console.log(err) && res.json({error: 'Invalid url'}) : console.log(address);
+
+        if (err) return;
+        res.json({ original_url: req.body.url, short_url: `${i}`});
+        
+        let originalReq = req;
+        app.get(`/api/${i}`, (req, res) => {
+            res.redirect(originalReq.body.url)
+        })
+        i++;
+    })
+
+
+
 });
 
 app.listen(PORT, function() {
   console.log(`Listening on port ${PORT}`);
-});*/
+});
 
 
 
@@ -82,65 +97,65 @@ app.listen(PORT, function() {
 // }
 
 
-function convertToBase62(int, buildingString='') {
-  console.log(int);
-  let remainder = int % 62;
-  let intCopy = int;
-  let power = -1
+// function convertToBase62(int, buildingString='') {
+//   console.log(int);
+//   let remainder = int % 62;
+//   let intCopy = int;
+//   let power = -1
 
-  let powerArr = [];
-  while (intCopy >= 1)  {
-    console.log(`intCopy: ${intCopy}`)
-    console.log(intCopy%62)
-    intCopy /= 62
-    let intCopyCopy = intCopy;
+//   let powerArr = [];
+//   while (intCopy >= 1)  {
+//     console.log(`intCopy: ${intCopy}`)
+//     console.log(intCopy%62)
+//     intCopy /= 62
+//     let intCopyCopy = intCopy;
     
-    power += 1;
-    powerArr.push(power);
-  }
+//     power += 1;
+//     powerArr.push(power);
+//   }
 
-  powerArr.reverse()
+//   powerArr.reverse()
 
-  console.log(power);
-  console.log(powerArr);
+//   console.log(power);
+//   console.log(powerArr);
 
-}
+// }
 
-//3906
-console.log(convertToBase62(3844))
-// console.log(convertFromBase62('100'))
+// //3906
+// console.log(convertToBase62(3844))
+// // console.log(convertFromBase62('100'))
 
-function convertFromBase62(string) {
+// function convertFromBase62(string) {
 
-    (typeof string === 'string') ? null : throwErr('argument should be string');
+//     (typeof string === 'string') ? null : throwErr('argument should be string');
 
-    const base = 62;
-    let decimalValueOfCharCodeA = 65;
-    let uppercaseCharCodeOffset = -55;
-    let lowercaseCharCodeOffset = -61;
-    let runningSum = 0;
+//     const base = 62;
+//     let decimalValueOfCharCodeA = 65;
+//     let uppercaseCharCodeOffset = -55;
+//     let lowercaseCharCodeOffset = -61;
+//     let runningSum = 0;
     
 
-    for (let i = string.length -1; i > -1; i--) {
+//     for (let i = string.length -1; i > -1; i--) {
 
-      let possibleArabicNumeral = parseInt(string[i], 10);
-      let currentCharCode = string[i].charCodeAt(0);
-      let base10Value = (currentCharCode >= decimalValueOfCharCodeA && string[i].charCodeAt(0) <= decimalValueOfCharCodeA + 26) ? currentCharCode + uppercaseCharCodeOffset :
-      (currentCharCode >= decimalValueOfCharCodeA + 26 + 6 && currentCharCode <= decimalValueOfCharCodeA + 26 + 6 + 26 ) ? currentCharCode + lowercaseCharCodeOffset : null;
-        if (possibleArabicNumeral) {
+//       let possibleArabicNumeral = parseInt(string[i], 10);
+//       let currentCharCode = string[i].charCodeAt(0);
+//       let base10Value = (currentCharCode >= decimalValueOfCharCodeA && string[i].charCodeAt(0) <= decimalValueOfCharCodeA + 26) ? currentCharCode + uppercaseCharCodeOffset :
+//       (currentCharCode >= decimalValueOfCharCodeA + 26 + 6 && currentCharCode <= decimalValueOfCharCodeA + 26 + 6 + 26 ) ? currentCharCode + lowercaseCharCodeOffset : null;
+//         if (possibleArabicNumeral) {
             
-            runningSum += possibleArabicNumeral * Math.pow(62, string.length - i - 1);
-        } else if (base10Value != null) {
+//             runningSum += possibleArabicNumeral * Math.pow(62, string.length - i - 1);
+//         } else if (base10Value != null) {
 
-            runningSum += base10Value * Math.pow(62, string.length - i - 1);
-        }
+//             runningSum += base10Value * Math.pow(62, string.length - i - 1);
+//         }
 
-    }
+//     }
 
-    return runningSum;
-}
+//     return runningSum;
+// }
 
-// Utility functions
+// // Utility functions
 
 function throwErr(errMessage) {
     throw Error(errMessage)
