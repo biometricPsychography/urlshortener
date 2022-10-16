@@ -42,14 +42,14 @@ app.listen(PORT, function() {
 
 
 
-let symbolArr = [];
-for (let i = 0; i < 123; i++) {
-  if (i < 10) symbolArr.push(`${i}`);
-  if (i === 10) i = 64;
-  if (i > 64 && i < 91) symbolArr.push(String.fromCharCode(i));
-  if (i === 91) i = 97;
-  if (i > 95 && i <= 122) symbolArr.push(String.fromCharCode(i));
-}
+// let symbolArr = [];
+// for (let i = 0; i < 123; i++) {
+//   if (i < 10) symbolArr.push(`${i}`);
+//   if (i === 10) i = 64;
+//   if (i > 64 && i < 91) symbolArr.push(String.fromCharCode(i));
+//   if (i === 91) i = 97;
+//   if (i > 95 && i <= 122) symbolArr.push(String.fromCharCode(i));
+// }
 
 
 // function convertToBase62(int) {
@@ -104,27 +104,6 @@ function convertToBase62(int, buildingString='') {
   console.log(power);
   console.log(powerArr);
 
-  // if (int >= 62) {
-
-  //   let intQuotient = Math.trunc(int / 62);
-  //   // while (intQuotient > 61) {
-  //   //   intQuotient = Math.trunc(intQuotient / 62);
-  //   //   intQuotient + 0;
-  //   //   console.log(intQuotient);
-  //   // }
-
-  //   let base62Val = intQuotient;
-  //   console.log({base62Val})
-  //   buildingString += symbolArr[base62Val];
-  //   if (remainder > -1) {
-  //     return convertToBase62(remainder, buildingString);
-  //   }
-  // } else if (int > 0 && int < 62) {
-  //   buildingString += symbolArr[int];
-  //   return buildingString;
-  // } else if (int === 0) {
-  //   return buildingString+= '0';
-  // }
 }
 
 //3906
